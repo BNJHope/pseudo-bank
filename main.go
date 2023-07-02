@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/bnjhope/pseudo-bank/database"
 	"github.com/bnjhope/pseudo-bank/transaction"
 )
 
@@ -18,11 +20,21 @@ func getHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTransactions(w http.ResponseWriter, r *http.Request) {
+	var (
+		transactions []transaction.Transaction
+		err          error
+	)
 	fmt.Printf("got /hello request\n")
 	w.Header().Set("Content-Type", "application/json")
 
-	transactions, nil := transaction.GetTransactions()
-	io.WriteString(w, "Hello, HTTP!\n")
+	transactions, err = database.GetTransactions()
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+		http.Error(w, "my own error message", http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(transactions)
 }
 
 func main() {

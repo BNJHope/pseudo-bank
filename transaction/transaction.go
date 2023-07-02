@@ -1,6 +1,8 @@
 package transaction
 
 type Transaction struct {
-	Amount   float64
-	From, To string
+	Id     int     `json:"id"`
+	Amount float64 `json:"amount"`
+	From   string  `json:"from"`
+	To     string  `json:"to"`
 }

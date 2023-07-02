@@ -3,7 +3,7 @@ services:
     build:
       context: .
     environment:
-      - DB_URL="postgres:postgres@postgres"
+      - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres
     ports:
       - 3333:3333
     command: ["/usr/local/bin/pseudo-bank"]
