@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+    environment:
+      - DB_URL="postgres:postgres@postgres"
+    ports:
+      - 3333:3333
+    command: ["/usr/local/bin/pseudo-bank"]
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./data/postgres:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
