@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.20 AS build
 
 WORKDIR /usr/src/app
 
@@ -8,4 +8,9 @@ RUN go mod download && go mod verify
 COPY main.go ./
 COPY database ./database
 COPY transaction ./transaction
-RUN go build -v -o /usr/local/bin ./...
+RUN CGO_ENABLED=0 go build -v -o /usr/local/bin ./...
+
+FROM alpine:latest AS deploy
+
+COPY --from=build /usr/local/bin/pseudo-bank /usr/local/bin/pseudo-bank
+RUN chmod a+x /usr/local/bin/pseudo-bank

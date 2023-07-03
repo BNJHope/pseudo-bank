@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+      target: deploy
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres/postgres
     ports:
