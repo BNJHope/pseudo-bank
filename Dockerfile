@@ -13,4 +13,3 @@ RUN CGO_ENABLED=0 go build -v -o /usr/local/bin ./...
 FROM alpine:latest AS deploy
 
 COPY --from=build /usr/local/bin/pseudo-bank /usr/local/bin/pseudo-bank
-RUN chmod a+x /usr/local/bin/pseudo-bank
