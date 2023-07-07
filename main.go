@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -23,15 +24,22 @@ func getHello(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello, HTTP!\n")
 }
 
+func handleTransaction(w http.ResponseWriter, r *http.Request, tm database.TransactionManager) {
+	if r.Method == http.MethodGet {
+		getTransactions(w, r, tm)
+	} else if r.Method == http.MethodPost {
+		addTransaction(w, r, tm)
+	} else {
+		log.Error().Err(fmt.Errorf("unrecognised request method %v", r.Method)).Msg("Error handling /transaction request")
+		http.Error(w, "Error fetching transactions", http.StatusInternalServerError)
+	}
+}
+
 func getTransactions(w http.ResponseWriter, r *http.Request, tm database.TransactionManager) {
-	var (
-		transactions []transaction.Transaction
-		err          error
-	)
-	log.Info().Msg("got /transactions request\n")
+	log.Info().Msg("got /transaction request\n")
 	w.Header().Set("Content-Type", "application/json")
 
-	transactions, err = tm.GetTransactions()
+	transactions, err := tm.GetTransactions()
 
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting transactions")
@@ -39,6 +47,26 @@ func getTransactions(w http.ResponseWriter, r *http.Request, tm database.Transac
 	}
 
 	json.NewEncoder(w).Encode(transactions)
+}
+
+func addTransaction(w http.ResponseWriter, r *http.Request, tm database.TransactionManager) {
+	log.Info().Msg("got post /transaction request\n")
+	w.Header().Set("Content-Type", "application/json")
+
+	var t transaction.Transaction
+
+	json.NewDecoder(r.Body).Decode(&t)
+
+	transactionId, err := tm.SaveTransaction(&t)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Error saving transaction")
+		http.Error(w, "Error saving transaction", http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(struct {
+		Result int64 `json:"transactionId"`
+	}{transactionId})
 }
 
 func setupDB() (*sql.DB, error) {
@@ -63,8 +91,8 @@ func main() {
 
 	http.HandleFunc("/", getRoot)
 	http.HandleFunc("/hello", getHello)
-	http.HandleFunc("/transactions", func(w http.ResponseWriter, r *http.Request) {
-		getTransactions(w, r, tm)
+	http.HandleFunc("/transaction", func(w http.ResponseWriter, r *http.Request) {
+		handleTransaction(w, r, tm)
 	})
 
 	err := http.ListenAndServe(":3333", nil)

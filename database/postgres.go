@@ -15,7 +15,7 @@ func NewPgTransactionManager(db *sql.DB) PgTransactionsManager {
 	return PgTransactionsManager{db: db}
 }
 
-func (tm PgTransactionsManager) GetTransactions() ([]transaction.Transaction, error) {
+func (tm PgTransactionsManager) GetTransactions() (*[]transaction.Transaction, error) {
 	rows, dbQueryErr := tm.db.Query("select * from transaction")
 	if dbQueryErr != nil {
 		return nil, dbQueryErr
@@ -40,5 +40,18 @@ func (tm PgTransactionsManager) GetTransactions() ([]transaction.Transaction, er
 		return nil, err
 	}
 
-	return transactions, nil
+	return &transactions, nil
+}
+
+func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int64, error) {
+	var Id int64
+	queryDbErr := tm.db.QueryRow(`INSERT into transaction (Amount, FromAccount, ToAccount)
+	VALUES ($1, $2, $3)
+	RETURNING id`, t.Amount, t.From, t.To).Scan(&Id)
+
+	if queryDbErr != nil {
+		return -1, queryDbErr
+	}
+
+	return Id, nil
 }
