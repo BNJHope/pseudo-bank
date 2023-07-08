@@ -15,7 +15,7 @@ func NewPgTransactionManager(db *sql.DB) PgTransactionsManager {
 	return PgTransactionsManager{db: db}
 }
 
-func (tm PgTransactionsManager) GetTransactions() (*[]transaction.Transaction, error) {
+func (tm PgTransactionsManager) GetTransactions() ([]transaction.Transaction, error) {
 	rows, dbQueryErr := tm.db.Query("select * from transaction")
 	if dbQueryErr != nil {
 		return nil, dbQueryErr
@@ -40,7 +40,7 @@ func (tm PgTransactionsManager) GetTransactions() (*[]transaction.Transaction, e
 		return nil, err
 	}
 
-	return &transactions, nil
+	return transactions, nil
 }
 
 func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int64, error) {

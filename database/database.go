@@ -5,6 +5,6 @@ import (
 )
 
 type TransactionManager interface {
-	GetTransactions() (*[]transaction.Transaction, error)
+	GetTransactions() ([]transaction.Transaction, error)
 	SaveTransaction(*transaction.Transaction) (int64, error)
 }
