@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 
@@ -42,5 +43,35 @@ func TestGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 		if expected_row != actual_row {
 			t.Fatalf("Did not match rows\nExpected: %v\nActual: %v", expected_row, actual_row)
 		}
+	}
+}
+
+func TestGetTransactionsReturnsErrOnDbQueryFailure(t *testing.T) {
+
+	db, mock, err := sqlmock.New()
+
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	expectedMessage := "The query for transactions failed"
+
+	mock.ExpectQuery(regexp.QuoteMeta("select * from transaction")).WillReturnError(fmt.Errorf(expectedMessage))
+
+	pgDb := NewPgTransactionManager(db)
+
+	actual, err := pgDb.GetTransactions()
+
+	if actual != nil {
+		t.Errorf("Recevied result back %v", actual)
+	}
+
+	if err == nil {
+		t.Errorf("No err returned")
+	}
+
+	if err.Error() != expectedMessage {
+		t.Errorf("No err returned")
 	}
 }
