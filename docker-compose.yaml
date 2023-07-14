@@ -18,6 +18,17 @@ services:
     volumes:
       - ./data/postgres:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
+  integration-test:
+    build:
+      context: .
+      target: build
+    environment:
+      - APP_URL=app:3333
+    ports:
+      - 3333:3333
+    command: ["go", "test", "--tags=integration", "-v", "./..."]
+    depends_on:
+      - app
 
 volumes:
   db-data:
