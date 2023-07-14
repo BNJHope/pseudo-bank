@@ -87,6 +87,8 @@ func main() {
 		log.Error().Err(dbSetupErr).Msg("Error setting up database")
 	}
 
+	defer db.Close()
+
 	tm := database.NewPgTransactionManager(db)
 
 	http.HandleFunc("/", getRoot)
