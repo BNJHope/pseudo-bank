@@ -10,6 +10,9 @@ services:
     command: ["/usr/local/bin/pseudo-bank"]
     depends_on:
       - postgres
+    profiles:
+      - app
+      - integration-test
   postgres:
     image: postgres
     restart: always
@@ -18,6 +21,9 @@ services:
     volumes:
       - ./data/postgres:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
+    profiles:
+      - app
+      - integration-test
   integration-test:
     build:
       context: .
@@ -29,6 +35,8 @@ services:
     command: ["go", "test", "--tags=integration", "-v", "./..."]
     depends_on:
       - app
+    profiles:
+      - integration-test
 
 volumes:
   db-data:
