@@ -35,6 +35,11 @@ func handleTransaction(w http.ResponseWriter, r *http.Request, tm database.Trans
 	}
 }
 
+func handleUser(w http.ResponseWriter, r *http.Request, tm database.TransactionManager) {
+	log.Error().Err(fmt.Errorf("unrecognised request method %v", r.Method)).Msg("Error handling /user request")
+	http.Error(w, "Error fetching users", http.StatusInternalServerError)
+}
+
 func getTransactions(w http.ResponseWriter, r *http.Request, tm database.TransactionManager) {
 	log.Info().Msg("got /transaction request\n")
 	w.Header().Set("Content-Type", "application/json")
@@ -95,6 +100,9 @@ func main() {
 	http.HandleFunc("/hello", getHello)
 	http.HandleFunc("/transaction", func(w http.ResponseWriter, r *http.Request) {
 		handleTransaction(w, r, tm)
+	})
+	http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		handleUser(w, r, tm)
 	})
 
 	err := http.ListenAndServe(":3333", nil)
