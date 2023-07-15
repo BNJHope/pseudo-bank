@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/bnjhope/pseudo-bank/transaction"
+	"github.com/google/go-cmp/cmp"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
@@ -22,11 +23,11 @@ func TestGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 	expected = append(expected, transaction.Transaction{
 		Id:     1,
 		Amount: 32.00,
-		From:   "Ben",
-		To:     "Emma",
+		From:   []byte("d2e19190-59c8-4a43-8bb7-a729ea2b5173"),
+		To:     []byte("1a8580b6-fb6c-4f3a-8254-3c19e638f385"),
 	})
 
-	result := sqlmock.NewRows([]string{"1", "32.00", "Ben", "Emma"})
+	result := sqlmock.NewRows([]string{"1", "32.00", "d2e19190-59c8-4a43-8bb7-a729ea2b5173", "1a8580b6-fb6c-4f3a-8254-3c19e638f385"})
 
 	mock.ExpectQuery(regexp.QuoteMeta("select * from transaction")).WillReturnRows(result)
 
@@ -40,7 +41,7 @@ func TestGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 
 	for ix, actual_row := range actual {
 		expected_row := expected[ix]
-		if expected_row != actual_row {
+		if cmp.Equal(expected_row, actual_row) {
 			t.Fatalf("Did not match rows\nExpected: %v\nActual: %v", expected_row, actual_row)
 		}
 	}

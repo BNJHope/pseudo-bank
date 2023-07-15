@@ -1,7 +1,7 @@
 package user
 
 type User struct {
-	Id        [32]byte
+	Id        []byte
 	FirstName string
 	Surname   string
 }
