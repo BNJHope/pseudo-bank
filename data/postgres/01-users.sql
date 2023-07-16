@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
    id uuid PRIMARY KEY,
    firstname VARCHAR ( 255 ),
-   surname VARCHAR ( 255 )
+   surname VARCHAR ( 255 ),
+   balance double precision DEFAULT 0.00
 );
 
 INSERT into users (id, firstname, surname)
