@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/rs/zerolog/log"
 
@@ -54,6 +55,7 @@ func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int
 	tx, beginTxErr := tm.db.Begin()
 
 	if beginTxErr != nil {
+		log.Fatal().Err(beginTxErr).Msg("Failed to begin transaction")
 		return -1, beginTxErr
 	}
 
@@ -65,7 +67,7 @@ func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			log.Fatal().Err(rollbackErr).Msg("Failed to rollback insert transaction")
 		}
-		return -1, insertTransactionErr
+		return -1, fmt.Errorf("insert transaction: %w", insertTransactionErr)
 	}
 
 	decrementBalanceErr := tx.QueryRow(`UPDATE users
@@ -77,7 +79,7 @@ func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			log.Fatal().Err(rollbackErr).Msg("Failed to rollback decrement balance transaction")
 		}
-		return -1, decrementBalanceErr
+		return -1, fmt.Errorf("decrement balance: %w", decrementBalanceErr)
 	}
 
 	if NewAccountFromBalance < 0 {
@@ -99,11 +101,12 @@ func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			log.Fatal().Err(rollbackErr).Msg("Failed to rollback increment balance transaction")
 		}
-		return -1, incrementBalanceErr
+		return -1, fmt.Errorf("increment balance: %w", incrementBalanceErr)
 	}
 
 	if commitErr := tx.Commit(); commitErr != nil {
 		log.Fatal().Err(commitErr).Msg("Failed to commit transaction")
+		return -1, commitErr
 	}
 
 	return Id, nil
