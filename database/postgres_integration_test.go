@@ -51,8 +51,8 @@ func TestIntegrationGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 
 	for ix, actual_row := range actual {
 		expected_row := expected[ix]
-		if cmp.Equal(expected_row, actual_row) {
-			t.Fatalf("Did not match rows\nExpected: %v\nActual: %v", expected_row, actual_row)
+		if !cmp.Equal(expected_row, actual_row) {
+			t.Fatalf("Did not match rows\nExpected: %v\nActual: %v\nDiff: %v", expected_row, actual_row, cmp.Diff(expected_row, actual_row))
 		}
 	}
 }
