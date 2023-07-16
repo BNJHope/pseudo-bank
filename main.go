@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -64,14 +65,19 @@ func addTransaction(w http.ResponseWriter, r *http.Request, tm database.Transact
 
 	transactionId, err := tm.SaveTransaction(&t)
 
-	if err != nil {
+	target := &transaction.NotEnoughFundsInAccountError{}
+	if errors.As(err, &target) {
+		serr, _ := err.(*transaction.NotEnoughFundsInAccountError)
+		log.Error().Err(serr).Msg("Not enough funds in account")
+		http.Error(w, serr.Error(), http.StatusBadRequest)
+	} else if err != nil {
 		log.Error().Err(err).Msg("Error saving transaction")
 		http.Error(w, "Error saving transaction", http.StatusInternalServerError)
+	} else {
+		json.NewEncoder(w).Encode(struct {
+			Result int64 `json:"transactionId"`
+		}{transactionId})
 	}
-
-	json.NewEncoder(w).Encode(struct {
-		Result int64 `json:"transactionId"`
-	}{transactionId})
 }
 
 func setupDB() (*sql.DB, error) {
