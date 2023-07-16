@@ -21,8 +21,8 @@ func TestIntegrationGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 	expected = append(expected, transaction.Transaction{
 		Id:     1,
 		Amount: 20.5,
-		From:   []byte("d2e19190-59c8-4a43-8bb7-a729ea2b5173"),
-		To:     []byte("1a8580b6-fb6c-4f3a-8254-3c19e638f385"),
+		From:   "d2e19190-59c8-4a43-8bb7-a729ea2b5173",
+		To:     "1a8580b6-fb6c-4f3a-8254-3c19e638f385",
 	})
 
 	app_url := os.Getenv("APP_URL")

@@ -5,8 +5,8 @@ import "fmt"
 type Transaction struct {
 	Id     int     `json:"id"`
 	Amount float64 `json:"amount"`
-	From   []byte  `json:"from"`
-	To     []byte  `json:"to"`
+	From   string  `json:"from"`
+	To     string  `json:"to"`
 }
 
 type NotEnoughFundsInAccountError struct {

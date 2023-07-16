@@ -30,7 +30,7 @@ func (tm PgTransactionsManager) GetTransactions() ([]transaction.Transaction, er
 		var (
 			id                     int
 			Amount                 float64
-			FromAccount, ToAccount []byte
+			FromAccount, ToAccount string
 		)
 		if err := rows.Scan(&id, &Amount, &FromAccount, &ToAccount); err != nil {
 			return nil, err

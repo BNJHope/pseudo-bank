@@ -23,8 +23,8 @@ func TestGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 	expected = append(expected, transaction.Transaction{
 		Id:     1,
 		Amount: 32.00,
-		From:   []byte("d2e19190-59c8-4a43-8bb7-a729ea2b5173"),
-		To:     []byte("1a8580b6-fb6c-4f3a-8254-3c19e638f385"),
+		From:   "d2e19190-59c8-4a43-8bb7-a729ea2b5173",
+		To:     "1a8580b6-fb6c-4f3a-8254-3c19e638f385",
 	})
 
 	result := sqlmock.NewRows([]string{"1", "32.00", "d2e19190-59c8-4a43-8bb7-a729ea2b5173", "1a8580b6-fb6c-4f3a-8254-3c19e638f385"})
