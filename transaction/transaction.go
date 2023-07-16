@@ -16,6 +16,6 @@ type NotEnoughFundsInAccountError struct {
 
 func (err *NotEnoughFundsInAccountError) Error() string {
 	return fmt.Sprintf(`Unable to process transaction, not enough funds in account
-	Account Balance: %f,
-	Transaction Amount: %f`, err.AccountBalance, err.TransactionAmount)
+	Account Balance: %.2f,
+	Transaction Amount: %.2f`, err.AccountBalance, err.TransactionAmount)
 }
