@@ -18,8 +18,18 @@ func NewPgTransactionManager(db *sql.DB) PgTransactionsManager {
 	return PgTransactionsManager{db: db}
 }
 
-func (tm PgTransactionsManager) GetTransactions() ([]transaction.Transaction, error) {
-	rows, dbQueryErr := tm.db.Query("select * from transactions")
+func (tm PgTransactionsManager) GetTransactions(userId string) ([]transaction.Transaction, error) {
+	var (
+		rows       *sql.Rows
+		dbQueryErr error
+	)
+
+	if userId != "" {
+		rows, dbQueryErr = tm.db.Query("select * from transactions where transactions.fromaccount = $1", userId)
+	} else {
+		rows, dbQueryErr = tm.db.Query("select * from transactions")
+	}
+
 	if dbQueryErr != nil {
 		return nil, dbQueryErr
 	}

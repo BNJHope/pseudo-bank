@@ -45,7 +45,9 @@ func getTransactions(w http.ResponseWriter, r *http.Request, tm database.Transac
 	log.Info().Msg("got /transaction request\n")
 	w.Header().Set("Content-Type", "application/json")
 
-	transactions, err := tm.GetTransactions()
+	userId := r.URL.Query().Get("from")
+
+	transactions, err := tm.GetTransactions(userId)
 
 	if err != nil {
 		log.Error().Err(err).Msg("Error getting transactions")
