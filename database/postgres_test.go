@@ -33,7 +33,7 @@ func TestGetTransactionsReturnsTransactionsOnSuccess(t *testing.T) {
 
 	pgDb := NewPgTransactionManager(db)
 
-	actual, err := pgDb.GetTransactions()
+	actual, err := pgDb.GetTransactions("d2e19190-59c8-4a43-8bb7-a729ea2b5173")
 
 	if err != nil {
 		t.Error(err)
@@ -62,7 +62,7 @@ func TestGetTransactionsReturnsErrOnDbQueryFailure(t *testing.T) {
 
 	pgDb := NewPgTransactionManager(db)
 
-	actual, err := pgDb.GetTransactions()
+	actual, err := pgDb.GetTransactions("")
 
 	if actual != nil {
 		t.Errorf("Recevied result back %v", actual)
