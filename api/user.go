@@ -22,7 +22,7 @@ func getUser(w http.ResponseWriter, r *http.Request, tm database.TransactionMana
 	log.Info().Msg("got /user request\n")
 	w.Header().Set("Content-Type", "application/json")
 
-	userId := r.URL.Query().Get("from")
+	userId := r.URL.Query().Get("id")
 
 	user, err := tm.GetUser(userId)
 

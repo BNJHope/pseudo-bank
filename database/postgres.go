@@ -130,9 +130,9 @@ func (tm PgTransactionsManager) GetUser(userId string) (*user.User, error) {
 		fetchedUser user.User
 	)
 
-	row = tm.db.QueryRow("select * from users where users.id = $1", userId)
+	row = tm.db.QueryRow("select id, firstname, surname, balance from users where users.id = $1", userId)
 
-	if rowScanErr = row.Scan(&fetchedUser); rowScanErr != nil {
+	if rowScanErr = row.Scan(&fetchedUser.Id, &fetchedUser.FirstName, &fetchedUser.Surname, &fetchedUser.Balance); rowScanErr != nil {
 		return nil, rowScanErr
 	}
 
