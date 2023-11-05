@@ -8,5 +8,5 @@ import (
 type TransactionManager interface {
 	GetTransactions(userId string) ([]transaction.Transaction, error)
 	SaveTransaction(*transaction.Transaction) (int64, error)
-	GetUser(userId string) (user.User, error)
+	GetUser(userId string) (*user.User, error)
 }
