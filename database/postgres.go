@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/bnjhope/pseudo-bank/transaction"
+	"github.com/bnjhope/pseudo-bank/user"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -120,4 +121,20 @@ func (tm PgTransactionsManager) SaveTransaction(t *transaction.Transaction) (int
 	}
 
 	return Id, nil
+}
+
+func (tm PgTransactionsManager) GetUser(userId string) (*user.User, error) {
+	var (
+		row         *sql.Row
+		rowScanErr  error
+		fetchedUser user.User
+	)
+
+	row = tm.db.QueryRow("select * from users where users.id = $1", userId)
+
+	if rowScanErr = row.Scan(&fetchedUser); rowScanErr != nil {
+		return nil, rowScanErr
+	}
+
+	return &fetchedUser, nil
 }
