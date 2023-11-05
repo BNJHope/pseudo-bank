@@ -9,6 +9,7 @@ COPY api ./api
 COPY cmd ./cmd
 COPY database ./database
 COPY transaction ./transaction
+COPY user ./user
 RUN CGO_ENABLED=0 go build -v -o /usr/local/bin ./...
 
 FROM alpine:latest AS deploy
