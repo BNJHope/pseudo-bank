@@ -48,6 +48,13 @@ services:
       - app
     profiles:
       - integration-test
+  unit-test:
+    build:
+      context: .
+      target: build
+    command: [ "go", "test", "-v", "./..." ]
+    profiles:
+      - unit-test
 
 volumes:
   db-data:
