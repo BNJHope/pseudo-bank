@@ -13,6 +13,7 @@ services:
     profiles:
       - app
       - integration-test
+      - load-test
   postgres:
     image: postgres
     restart: always
@@ -24,6 +25,7 @@ services:
     profiles:
       - app
       - integration-test
+      - load-test
   kafka:
     image: 'bitnami/kafka:latest'
     environment:
@@ -55,6 +57,17 @@ services:
     command: [ "go", "test", "-v", "./..." ]
     profiles:
       - unit-test
+  load-test:
+    image: grafana/k6
+    profiles:
+      - load-test
+    environment:
+      - APP_URL=app:3333
+    volumes:
+      - .:/workarea
+    depends_on:
+      - app
+    command: [ "run", "/workarea/tests/load/smoke.js"]
 
 volumes:
   db-data:
