@@ -47,6 +47,9 @@ func main() {
 	http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
 		api.HandleUser(w, r, tm)
 	})
+	http.HandleFunc("/healthcheck", func(w http.ResponseWriter, r *http.Request) {
+		api.HandleHealthcheck(w, r)
+	})
 
 	err := http.ListenAndServe(":3333", nil)
 	if err != nil {
