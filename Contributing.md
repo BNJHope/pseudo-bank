@@ -23,4 +23,16 @@ run as separate containers. To run the integration test suite, run the command:
 docker compose --profile integration-test run integration-test
 ```
 
-This will start the integration test container after bringing up its dependencies, which will run integration tests against the available application endpoints.
+This will start the integration test container, which will run integration tests against the available application endpoints, after bringing up its dependencies.
+
+### Load Tests
+
+The load testing configuration is currently being built. It is managed by [`k6` runner](https://k6.io/) in the Docker Compose set up and benchmarks against the
+APIs `/transactions` endpoint. To run the load test suite, run:
+
+```bash
+docker compose --profile load-test run load-test
+```
+
+This will start the load test container after bringing up its dependencies.
+
