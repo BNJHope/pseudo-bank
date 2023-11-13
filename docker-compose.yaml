@@ -68,7 +68,7 @@ services:
     profiles:
       - load-test
     environment:
-      - APP_URL=app:3333
+      - APP_URL=http://app:3333
     volumes:
       - .:/workarea
     depends_on:
