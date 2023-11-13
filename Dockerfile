@@ -13,5 +13,10 @@ COPY user ./user
 RUN CGO_ENABLED=0 go build -v -o /usr/local/bin ./...
 
 FROM alpine:latest AS deploy
+ 
+# Add curl to allow for service healthcheck to be run
+RUN apk update &&\
+    apk upgrade &&\
+    apk add curl
 
 COPY --from=build /usr/local/bin/pseudo-bank /usr/local/bin/pseudo-bank

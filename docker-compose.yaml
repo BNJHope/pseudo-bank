@@ -14,6 +14,12 @@ services:
       - app
       - integration-test
       - load-test
+    healthcheck:
+      test: curl --fail http://app:3333/healthcheck || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
   postgres:
     image: postgres
     restart: always
@@ -66,8 +72,9 @@ services:
     volumes:
       - .:/workarea
     depends_on:
-      - app
-    command: [ "run", "/workarea/tests/load/smoke.js"]
+      app:
+        condition: service_healthy
+    command: [ "run", "/workarea/tests/load/smoke.js" ]
 
 volumes:
   db-data:
